@@ -3,6 +3,7 @@
 ## Ejecutar
 - java -jar build/digest-0.0.1.jar -a algoritmo -f "archivo o directorio"
 - Parametro opcional "-o" para ordenar por el nombre de los archivos  
+- Soporta ejecución en paralela
 
 ## Compilar
 - Instalar jdk min 1.8
