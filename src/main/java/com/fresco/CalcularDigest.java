@@ -25,7 +25,7 @@ public class CalcularDigest {
 		this.fileName = fileName;
 	}
 
-	public Resultado obtenerDigest() throws NoSuchAlgorithmException, FileNotFoundException, IOException {
+	public Resultado obtenerDigest()  {
 
 		try (InputStream in = new FileInputStream(archivo)) {
 			if ("md2".equals(algoritmo)) {
@@ -45,7 +45,13 @@ public class CalcularDigest {
 			} else if ("sha3-512".equals(algoritmo)) {
 				return new Resultado(sha3_512(in), fileName);
 			}
-			throw new NoSuchAlgorithmException(algoritmo + " No soportado");
+			return new Resultado(algoritmo + " No soportado", fileName);
+		} catch (FileNotFoundException e) {
+			return new Resultado(e.getMessage(), fileName);
+		} catch (IOException e) {
+			return new Resultado(e.getMessage(), fileName);
+		} catch (NoSuchAlgorithmException e) {
+			return new Resultado(e.getMessage(), fileName);
 		}
 	}
 

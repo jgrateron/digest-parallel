@@ -1,12 +1,9 @@
 package com.fresco;
 
 import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
+import static java.util.stream.Collectors.*;
 
 import com.jenkov.cliargs.CliArgs;
 
@@ -37,55 +34,52 @@ public class App {
 		if (!hf) {
 			errorAndExit("Falta el parámetro fuente -f ...");
 		}
-		String[] fuente = cliArgs.switchValues("-f");
-		if (fuente.length == 0) {
+		String[] fuentes = cliArgs.switchValues("-f");
+		if (fuentes.length == 0) {
 			errorAndExit("Falta la(s) fuente(s) ...");
 		}
 		boolean ordenar = cliArgs.switchPresent("-o");
 
-		for (String f : fuente) {
+		for (String fuente : fuentes) {
 			List<CalcularDigest> listFilesCalcular = new ArrayList<>();
-			for (String a : algoritmos) {
-				File file = new File(f);
-				if (file.isDirectory()) {
-					String[] files = file.list();
+
+			File ruta = new File(fuente);
+			if (ruta.isDirectory()) {
+				String[] files = ruta.list();
+				if (files != null) {
 					for (String ff : files) {
-						String pathFile = f + File.separator + ff;
+						String pathFile = fuente + File.separator + ff;
 						File f2 = new File(pathFile);
 						if (f2.isFile()) {
-							listFilesCalcular.add(new CalcularDigest(a, f2, pathFile));
+							for (String alg : algoritmos) {
+								listFilesCalcular.add(new CalcularDigest(alg, f2, pathFile));
+							}
 						}
-					}
-				} else {
-					File f2 = new File(f);
-					if (f2.isFile()) {
-						listFilesCalcular.add(new CalcularDigest(a, f2, f));
 					}
 				}
-			}
-			if (!listFilesCalcular.isEmpty()) {
-				List<Resultado> listResultados = new ArrayList<>();
-				listFilesCalcular.parallelStream().forEach(calcular -> {
-					try {
-						Resultado resultado = calcular.obtenerDigest();
-						if (ordenar) {
-							listResultados.add(resultado);
-						}
-						else {
-							System.out.println(resultado);
-						}
-					} catch (NoSuchAlgorithmException | IOException e) {
-						e.printStackTrace();
-					}
-				});
-				if (ordenar) {
-					Collections.sort(listResultados, new Resultado.ResultadoComparator());
-					listResultados.stream().forEach(resultado ->  {
-						System.out.println(resultado.toString());
-					});
+			} else 
+			if (ruta.isFile()){
+				for (String alg : algoritmos) {
+					listFilesCalcular.add(new CalcularDigest(alg, ruta, fuente));
 				}
 			}
+
+			listFilesCalcular.parallelStream()
+			                 .map(c -> c.obtenerDigest())
+			                 .collect(toList())
+			                 .stream()
+							 .sorted((x, y) -> comparator(ordenar,x,y))
+							 .map(r -> r.toString())
+							 .forEach(System.out::println);
 		}
 	}
-
+	
+	public static int comparator(boolean ordenar, Resultado x, Resultado y) {
+		if (ordenar) {
+			return x.getFileName().compareTo(y.getFileName());
+		}
+		else {
+			return 0;
+		}
+	}
 }
