@@ -25,11 +25,6 @@ public class App {
 		if (algoritmos.length == 0) {
 			errorAndExit("Falta el algoritmo(s) ...");
 		}
-		for (String a : algoritmos) {
-			if (CalcularDigest.ALGORITMOS.indexOf(a) == -1) {
-				errorAndExit("Algorithm valids : " + CalcularDigest.ALGORITMOS.toString());
-			}
-		}
 		boolean hf = cliArgs.switchPresent("-f");
 		if (!hf) {
 			errorAndExit("Falta el parámetro fuente -f ...");
