@@ -36,7 +36,8 @@ public class App {
 		boolean ordenar = cliArgs.switchPresent("-o");
 
 		for (String fuente : fuentes) {
-			List<CalcularDigest> listFilesCalcular = new ArrayList<>();
+			System.out.println(fuente);
+			List<CalcularDigest> listFilesCalcular = new ArrayList<CalcularDigest>();
 
 			File ruta = new File(fuente);
 			if (ruta.isDirectory()) {

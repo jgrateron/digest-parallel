@@ -58,7 +58,7 @@ public class AppTest
     {
     	String fileName = "sample_document.pdf";
     	File file = new File(fileName);
-        assertTrue( "829cd179343c2127b410319a167d8a6199dccd4ceeeed4ed0c6a23548eb03db59f9a9ad6417c1fae7fc7ad43ba55f427  sample_document.pdf".equals(new CalcularDigest("sha384", file, fileName).obtenerDigest().toString()));   
+        assertTrue( "829cd179343c2127b410319a167d8a6199dccd4ceeeed4ed0c6a23548eb03db59f9a9ad6417c1fae7fc7ad43ba55f427  sample_document.pdf".equals(new CalcularDigest("sha384", file, fileName).obtenerDigest().toString()));
     }
     
     public void testAppSha512() throws NoSuchAlgorithmException, FileNotFoundException, IOException

@@ -27,7 +27,7 @@ public class CalcularDigest {
 		digest.put("md5", md5);
 		digest.put("sha", sha);
 		digest.put("sha256", sha256);
-		digest.put("sha386", sha384);
+		digest.put("sha384", sha384);
 		digest.put("sha512", sha512);
 		digest.put("sha3-256", sha3_256);
 		digest.put("sha3-512", sha3_512);
@@ -48,93 +48,50 @@ public class CalcularDigest {
 	}
 
 	public Function<InputStream, String> md2 = fis -> {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("MD2");
-			byte[] resumen = calcDigest(messageDigest, fis);
-			return toString(resumen);
-		} catch (NoSuchAlgorithmException | IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e.getCause());
-		}
+		return calcDigest("MD2", fis);
 	};
 
 	public Function<InputStream, String> md5 = fis -> {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-			byte[] resumen = calcDigest(messageDigest, fis);
-			return toString(resumen);
-		} catch (NoSuchAlgorithmException | IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e.getCause());
-		}
+		return calcDigest("MD5", fis);
 	};
 
 	public Function<InputStream, String> sha = fis -> {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA");
-			byte[] resumen = calcDigest(messageDigest, fis);
-			return toString(resumen);
-		} catch (NoSuchAlgorithmException | IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e.getCause());
-		}
+		return calcDigest("SHA", fis);
 	};
 
 	public Function<InputStream, String> sha256 = fis -> {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			byte[] resumen = calcDigest(messageDigest, fis);
-			return toString(resumen);
-		} catch (NoSuchAlgorithmException | IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e.getCause());
-		}
+		return calcDigest("SHA-256", fis);
 	};
 
 	public Function<InputStream, String> sha384 = fis -> {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-384");
-			byte[] resumen = calcDigest(messageDigest, fis);
-			return toString(resumen);
-		} catch (NoSuchAlgorithmException | IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e.getCause());
-		}
+		return calcDigest("SHA-384", fis);
 	};
 
 	public Function<InputStream, String> sha512 = fis -> {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
-			byte[] resumen = calcDigest(messageDigest, fis);
-			return toString(resumen);
-		} catch (NoSuchAlgorithmException | IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e.getCause());
-		}
+		return calcDigest("SHA-512", fis);
 	};
 
 	public Function<InputStream, String> sha3_256 = fis -> {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA3-256");
-			byte[] resumen = calcDigest(messageDigest, fis);
-			return toString(resumen);
-		} catch (NoSuchAlgorithmException | IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e.getCause());
-		}
+		return calcDigest("SHA3-256", fis);
 	};
 
 	public Function<InputStream, String> sha3_512 = fis -> {
+		return calcDigest("SHA3-512", fis);
+	};
+
+	public static String calcDigest(String algo, InputStream fis) {
 		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA3-512");
-			byte[] resumen = calcDigest(messageDigest, fis);
+			MessageDigest messageDigest = MessageDigest.getInstance(algo);
+			byte[] buffer = new byte[4096];
+			int leidos;
+			while ((leidos = fis.read(buffer)) != -1) {
+				messageDigest.update(buffer, 0, leidos);
+			}
+			byte[] resumen = messageDigest.digest();
 			return toString(resumen);
 		} catch (NoSuchAlgorithmException | IOException e) {
 			throw new IllegalArgumentException(e.getMessage(), e.getCause());
 		}
-	};
-
-	public static byte[] calcDigest(MessageDigest messageDigest, InputStream fis) throws IOException {
-		byte[] buffer = new byte[4096];
-		int leidos;
-		while ((leidos = fis.read(buffer)) != -1) {
-			messageDigest.update(buffer, 0, leidos);
-		}
-		byte[] resumen = messageDigest.digest();
-		return resumen;
 	}
 
 	public static String toString(byte[] a) {
