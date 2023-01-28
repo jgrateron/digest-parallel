@@ -21,7 +21,7 @@ public class CalcularDigest {
 	public CalcularDigest(String algoritmo, File archivo, String fileName) {
 		this.algoritmo = algoritmo;
 		this.archivo = archivo;
-		this.fileName = fileName;
+		this.fileName = fileName.replaceAll("//", "/");
 		digest = new HashMap<>();
 		digest.put("md2", md2);
 		digest.put("md5", md5);
