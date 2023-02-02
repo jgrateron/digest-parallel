@@ -34,7 +34,10 @@ public class App {
 			errorAndExit("Falta la(s) fuente(s) ...");
 		}
 		boolean ordenar = cliArgs.switchPresent("-o");
-
+		String [] ordenarPor = cliArgs.switchValues("-o");
+		
+		boolean corto = cliArgs.switchPresent("-c");
+		
 		for (String fuente : fuentes) {
 			System.out.println(fuente);
 			List<CalcularDigest> listFilesCalcular = new ArrayList<CalcularDigest>();
@@ -48,7 +51,7 @@ public class App {
 						File f2 = new File(pathFile);
 						if (f2.isFile()) {
 							for (String alg : algoritmos) {
-								listFilesCalcular.add(new CalcularDigest(alg, f2, pathFile));
+								listFilesCalcular.add(new CalcularDigest(alg, f2, pathFile, corto));
 							}
 						}
 					}
@@ -56,7 +59,7 @@ public class App {
 			} else 
 			if (ruta.isFile()){
 				for (String alg : algoritmos) {
-					listFilesCalcular.add(new CalcularDigest(alg, ruta, fuente));
+					listFilesCalcular.add(new CalcularDigest(alg, ruta, fuente, corto));
 				}
 			}
 
@@ -64,14 +67,19 @@ public class App {
 			                 .map(c -> c.obtenerDigest())
 			                 .collect(toList())
 			                 .stream()
-							 .sorted((x, y) -> comparator(ordenar,x,y))
+							 .sorted((x, y) -> comparator(ordenar, ordenarPor,x,y))
 							 .map(r -> r.toString())
 							 .forEach(System.out::println);
 		}
 	}
 	
-	public static int comparator(boolean ordenar, Resultado x, Resultado y) {
-		if (ordenar) {
+	public static int comparator(boolean ordenar, String [] ordenarPor, Resultado x, Resultado y) {
+		if (ordenar){
+			if (ordenarPor.length > 0) {
+				if (ordenarPor[0].equals("d")) {
+					return x.getDigest().compareTo(y.getDigest());				
+				}
+			}
 			return x.getFileName().compareTo(y.getFileName());
 		}
 		else {
